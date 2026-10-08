@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aventura de Aprendizaje - Preescolar</title>
+    <style>
+        :root {
+            --primary-bg: #EEF7FF;
+            --card-bg: #FFFFFF;
+            --accent-pink: #FF85A1;
+            --accent-yellow: #FFD166;
+            --accent-green: #06D6A0;
+            --accent-blue: #118AB2;
+            --accent-purple: #9D4EDD;
+            --text-color: #2B2D42;
+            --text-light: #6C757D;
+            --font-family: 'Comic Sans MS', 'Fredoka', 'Chalkboard SE', 'Comic Neue', sans-serif;
+            --shadow-soft: 0 10px 25px rgba(0, 0, 0, 0.08);
+            --shadow-button: 0 6px 0px rgba(0, 0, 0, 0.15);
+            --radius-large: 24px;
+            --radius-medium: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        /* Contenedor Principal */
+        .app-container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card-bg);
+            border-radius: var(--radius-large);
+            box-shadow: var(--shadow-soft);
+            padding: 25px;
+            position: relative;
+            min-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Encabezado */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px dashed #E0E0E0;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #FFF3BF;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #D97706;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            background: #F1F5F9;
+            padding: 6px 14px;
+            border-radius: 50px;
+        }
+
+        /* Secciones y Pantallas */
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Títulos e Instrucciones */
+        h1 {
+            font-size: 2.5rem;
+            color: var(--accent-purple);
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+        }
+
+        p.instruction {
+            font-size: 1.4rem;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Botones Gigantes */
+        .btn-large {
+            background-color: var(--accent-green);
+            color: white;
+            font-family: var(--font-family);
+            font-size: 1.8rem;
+            font-weight: bold;
+            padding: 16px 36px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: var(--shadow-button);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 15px;
+            text-decoration: none;
+        }
+
+        .btn-large:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+
+        .btn-large:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        .btn-audio {
+            background: #E2E8F0;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 1.4rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .btn-audio:hover {
+            transform: scale(1.1);
+        }
+
+        /* Input Nombre */
+        .input-name {
+            font-family: var(--font-family);
+            font-size: 1.6rem;
+            padding: 12px 24px;
+            border: 4px solid var(--accent-blue);
+            border-radius: var(--radius-medium);
+            text-align: center;
+            width: 80%;
+            max-width: 350px;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        .input-name:focus {
+            border-color: var(--accent-purple);
+        }
+
+        /* Menú de Juegos */
+        .game-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .menu-card {
+            background: #F8FAFC;
+            border: 4px solid #E2E8F0;
+            border-radius: var(--radius-large);
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-blue);
+            background: #F0F9FF;
+        }
+
+        .menu-card .icon {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        .menu-card h3 {
+            font-size: 1.4rem;
+            color: var(--text-color);
+        }
+
+        /* Área de Clasificación / Drag & Drop / Selección */
+        .drop-zones {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+
+        .drop-zone {
+            background: #F1F5F9;
+            border: 3px dashed #CBD5E1;
+            border-radius: var(--radius-medium);
+            padding: 15px;
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            transition: background 0.3s;
+        }
+
+        .drop-zone.drag-over {
+            background: #E0F2FE;
+            border-color: var(--accent-blue);
+        }
+
+        .drop-zone h4 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .draggable-items {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            width: 100%;
+            min-height: 120px;
+            padding: 10px;
+            background: #FAF5FF;
+            border-radius: var(--radius-medium);
+        }
+
+        .game-item {
+            background: white;
+            border: 3px solid #E2E8F0;
+            border-radius: var(--radius-medium);
+            padding: 10px 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: grab;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .game-item:active {
+            cursor: grabbing;
+        }
+
+        .game-item .emoji {
+            font-size: 2.5rem;
+        }
+
+        /* Opciones de Preguntas (Actividad 3) */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 4px solid #E2E8F0;
+            border-radius: var(--radius-large);
+            padding: 20px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .option-btn:hover {
+            border-color: var(--accent-purple);
+            transform: scale(1.03);
+            background: #FAF5FF;
+        }
+
+        .option-btn .emoji {
+            font-size: 3rem;
+        }
+
+        /* Barra de Progreso */
+        .progress-container {
+            width: 100%;
+            background-color: #E2E8F0;
+            border-radius: 50px;
+            height: 18px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-green);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Retroalimentación Flotante */
+        .feedback-toast {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--card-bg);
+            border-radius: 50px;
+            padding: 12px 28px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .feedback-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .feedback-toast.correct {
+            border: 3px solid var(--accent-green);
+            color: #047857;
+        }
+
+        .feedback-toast.incorrect {
+            border: 3px solid var(--accent-yellow);
+            color: #B45309;
+        }
+
+        /* Modal / Canvas de Confeti */
+        canvas#confetti-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        /* Botones Secundarios */
+        .btn-secondary {
+            background: #64748B;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-family: var(--font-family);
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        /* Panel Docente / Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-large);
+            padding: 25px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #CBD5E1;
+            padding: 8px 12px;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background: #F1F5F9;
+        }
+
+        /* Responsive UI */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            h2 { font-size: 1.4rem; }
+            p.instruction { font-size: 1.1rem; }
+            .btn-large { font-size: 1.3rem; padding: 12px 24px; }
+            .game-item { font-size: 1rem; padding: 8px; }
+            .game-item .emoji { font-size: 1.8rem; }
+            .drop-zones { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <canvas id="confetti-canvas"></canvas>
+
+        <!-- Retroalimentación Flotante -->
+        <div id="feedback-toast" class="feedback-toast">
+            <span id="toast-emoji">🌟</span>
+            <span id="toast-text">¡Muy bien!</span>
+        </div>
+
+        <!-- Encabezado -->
+        <header>
+            <div class="user-badge">
+                <span>👤</span>
+                <span id="user-display-name">Amiguito</span>
+            </div>
+            <div class="stats-bar">
+                <div class="stat-item" title="Estrellas">
+                    ⭐ <span id="star-count">0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- PANTALLA 1: BIENVENIDA Y REGISTRO -->
+        <section id="screen-welcome" class="screen active">
+            <h1>¡Aventura de Aprendizaje! 🌈</h1>
+            <p class="instruction">
+                ¿Cómo te llamas?
+                <button class="btn-audio" onclick="speakText('¿Cómo te llamas? Escribe tu nombre para empezar.')">🔊</button>
+            </p>
+            <input type="text" id="player-name-input" class="input-name" placeholder="Escribe tu nombre aquí..." maxlength="20">
+            <button class="btn-large" onclick="startAdventure()">
+                ¡Comenzar la Aventura! 🚀
+            </button>
+            <button class="btn-secondary" style="margin-top: 25px;" onclick="openTeacherPanel()">
+                👨‍🏫 Panel Docente / Familias
+            </button>
+        </section>
+
+        <!-- PANTALLA 2: MENÚ DE ACTIVIDADES -->
+        <section id="screen-menu" class="screen">
+            <h2>Selecciona una Actividad</h2>
+            <p class="instruction">
+                Elige lo que quieres jugar hoy
+                <button class="btn-audio" onclick="speakText('Elige la actividad que deseas jugar hoy')">🔊</button>
+            </p>
+            <div class="game-menu">
+                <div class="menu-card" onclick="loadActivity(1)">
+                    <div class="icon">☀️</div>
+                    <h3>Mañana, Tarde y Noche</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-light); margin-top: 5px;">Rutinas diarias</p>
+                </div>
+                <div class="menu-card" onclick="loadActivity(2)">
+                    <div class="icon">🌧️</div>
+                    <h3>Tipos de Clima</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-light); margin-top: 5px;">Ropa y actividades</p>
+                </div>
+                <div class="menu-card" onclick="loadActivity(3)">
+                    <div class="icon">🪐</div>
+                    <h3>El Sistema Solar</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-light); margin-top: 5px;">Aventura espacial</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANTALLA 3: ACTIVIDAD 1 & 2 (CLASIFICACIÓN) -->
+        <section id="screen-classification" class="screen">
+            <h2 id="activity-title">Clasificación</h2>
+            <p class="instruction">
+                <span id="activity-instruction">Arrastra o toca cada elemento hacia su lugar correspondiente.</span>
+                <button class="btn-audio" id="btn-audio-instruction">🔊</button>
+            </p>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="activity-progress"></div>
+            </div>
+
+            <!-- Zonas de Destino -->
+            <div class="drop-zones" id="drop-zones-container"></div>
+
+            <!-- Elementos a Clasificar -->
+            <div class="draggable-items" id="draggable-items-container"></div>
+
+            <button class="btn-secondary" onclick="showMenu()">← Volver al Menú</button>
+        </section>
+
+        <!-- PANTALLA 4: ACTIVIDAD 3 (SISTEMA SOLAR - PREGUNTAS) -->
+        <section id="screen-quiz" class="screen">
+            <h2>🚀 El Sistema Solar 🌟</h2>
+            <p class="instruction">
+                <span id="quiz-question-text">Pregunta...</span>
+                <button class="btn-audio" id="btn-audio-quiz">🔊</button>
+            </p>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="quiz-progress"></div>
+            </div>
+
+            <div id="quiz-svg-container" style="margin: 15px 0;"></div>
+
+            <div class="options-grid" id="quiz-options-container"></div>
+
+            <button class="btn-secondary" onclick="showMenu()" style="margin-top: 20px;">← Volver al Menú</button>
+        </section>
+
+        <!-- PANTALLA 5: RESUMEN / FINALIZACIÓN -->
+        <section id="screen-summary" class="screen">
+            <h1>¡Felicitaciones! 🎉</h1>
+            <div id="badge-display" style="font-size: 5rem; margin: 10px 0;">🏆</div>
+            <h2 id="summary-message">¡Lo hiciste genial!</h2>
+            
+            <div style="background: #F8FAFC; padding: 20px; border-radius: var(--radius-medium); width: 100%; max-width: 400px; margin: 15px 0;">
+                <p style="font-size: 1.2rem; margin-bottom: 8px;"><strong>Aciertos:</strong> <span id="summary-correct" style="color: var(--accent-green);">0</span></p>
+                <p style="font-size: 1.2rem; margin-bottom: 8px;"><strong>Intentos extra:</strong> <span id="summary-errors" style="color: var(--accent-yellow);">0</span></p>
+                <p style="font-size: 1.2rem;"><strong>Tiempo:</strong> <span id="summary-time">0s</span></p>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                <button class="btn-large" onclick="sendReportWhatsApp()">
+                    📱 Enviar por WhatsApp
+                </button>
+                <button class="btn-large" style="background-color: var(--accent-blue);" onclick="sendReportFormSubmit()">
+                    ✉️ Enviar Notificación
+                </button>
+            </div>
+
+            <button class="btn-secondary" onclick="showMenu()" style="margin-top: 15px;">
+                🏠 Volver a Jugar
+            </button>
+        </section>
+    </div>
+
+    <!-- MODAL PANEL DOCENTE -->
+    <div id="teacher-modal" class="modal">
+        <div class="modal-content">
+            <h2>👨‍🏫 Panel de Control Docente / Familia</h2>
+            <p style="margin-bottom: 15px; color: var(--text-light);">Historial de actividades guardadas en este dispositivo:</p>
+            <div style="overflow-x: auto;">
+                <table id="records-table">
+                    <thead>
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Actividad</th>
+                            <th>Aciertos</th>
+                            <th>Errores</th>
+                            <th>Tiempo</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn-secondary" onclick="exportCSV()">📥 Exportar CSV</button>
+                <button class="btn-secondary" style="background-color: #EF4444;" onclick="clearRecords()">🗑️ Limpiar</button>
+                <button class="btn-secondary" onclick="closeTeacherPanel()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================================================
+           1. ESTADO GLOBAL Y VARIABLES DE LA APLICACIÓN
+           ========================================================================== */
+        let currentUser = "";
+        let totalStars = 0;
+        let currentActivity = 0;
+        let activityStartTime = 0;
+        let correctCount = 0;
+        let errorCount = 0;
+        let currentStep = 0;
+        let selectedItem = null; // Para interacción táctil/clic alternativo
+
+        /* ==========================================================================
+           2. SINTETIZADOR DE AUDIO Y SONIDOS (Web Audio API & Web Speech API)
+           ========================================================================== */
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.15); // E5
+                osc.frequency.exponentialRampToValueAtTime(783.99, audioCtx.currentTime + 0.3); // G5
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'incorrect') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+                osc.frequency.exponentialRampToValueAtTime(180, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.25);
+            } else if (type === 'win') {
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    const noteOsc = audioCtx.createOscillator();
+                    const noteGain = audioCtx.createGain();
+                    noteOsc.connect(noteGain);
+                    noteGain.connect(audioCtx.destination);
+                    noteOsc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.1);
+                    noteGain.gain.setValueAtTime(0.2, audioCtx.currentTime + idx * 0.1);
+                    noteGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + idx * 0.1 + 0.3);
+                    noteOsc.start(audioCtx.currentTime + idx * 0.1);
+                    noteOsc.stop(audioCtx.currentTime + idx * 0.1 + 0.3);
+                });
+            }
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Detener lecturas previas
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-ES';
+                utterance.rate = 0.9; // Velocidad pausada para preescolar
+                utterance.pitch = 1.1; // Tono ligeramente agudo e infantil
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        /* ==========================================================================
+           3. DATOS DE LAS ACTIVIDADES
+           ========================================================================== */
+        const activity1Data = {
+            title: "Mañana, Tarde y Noche ☀️🌤️🌙",
+            instruction: "Clasifica las acciones según el momento del día.",
+            categories: [
+                { id: "manana", title: "Mañana ☀️" },
+                { id: "tarde", title: "Tarde 🌤️" },
+                { id: "noche", title: "Noche 🌙" }
+            ],
+            items: [
+                { id: "1", text: "Bañarse", emoji: "🧴", category: "manana" },
+                { id: "2", text: "Desayunar", emoji: "🥞", category: "manana" },
+                { id: "3", text: "Ir al parque", emoji: "🛝", category: "tarde" },
+                { id: "4", text: "Hacer tareas", emoji: "✏️", category: "tarde" },
+                { id: "5", text: "Cenar en familia", emoji: "🍲", category: "noche" },
+                { id: "6", text: "Dormir en cama", emoji: "😴", category: "noche" }
+            ]
+        };
+
+        const activity2Data = {
+            title: "Tipos de Clima ❄️☀️🌧️",
+            instruction: "Clasifica la ropa y actividades según el clima.",
+            categories: [
+                { id: "frio", title: "Clima Frío ❄️" },
+                { id: "calido", title: "Clima Cálido ☀️" },
+                { id: "lluvia", title: "Clima Lluvioso 🌧️" }
+            ],
+            items: [
+                { id: "1", text: "Abrigo de lana", emoji: "🧥", category: "frio" },
+                { id: "2", text: "Chocolate caliente", emoji: "☕", category: "frio" },
+                { id: "3", text: "Traje de baño", emoji: "🩱", category: "calido" },
+                { id: "4", text: "Comer helado", emoji: "🍦", category: "calido" },
+                { id: "5", text: "Usar sombrilla", emoji: "☂️", category: "lluvia" },
+                { id: "6", text: "Botas de agua", emoji: "🥾", category: "lluvia" }
+            ]
+        };
+
+        const activity3Data = {
+            questions: [
+                {
+                    question: "¿Cómo se llama el planeta donde vivimos?",
+                    options: [
+                        { text: "Planeta Tierra", emoji: "🌍", isCorrect: true },
+                        { text: "Planeta Marte", emoji: "🔴", isCorrect: false },
+                        { text: "Planeta Júpiter", emoji: "🪐", isCorrect: false }
+                    ],
+                    svg: `<svg width="120" height="120" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#3B82F6"/><path d="M 30 30 Q 40 10 60 30 T 80 60 Q 60 90 30 70 Z" fill="#10B981"/></svg>`
+                },
+                {
+                    question: "¿Cuántos planetas principales tiene el Sistema Solar?",
+                    options: [
+                        { text: "8 Planetas", emoji: "🪐", isCorrect: true },
+                        { text: "2 Planetas", emoji: "✌️", isCorrect: false },
+                        { text: "100 Planetas", emoji: "💯", isCorrect: false }
+                    ],
+                    svg: `<svg width="120" height="120" viewBox="0 0 100 100"><circle cx="50" cy="50" r="20" fill="#F59E0B"/><ellipse cx="50" cy="50" rx="38" ry="14" fill="none" stroke="#94A3B8" stroke-width="2"/><circle cx="20" cy="45" r="6" fill="#EF4444"/><circle cx="78" cy="55" r="8" fill="#3B82F6"/></svg>`
+                },
+                {
+                    question: "¿El Sol es un planeta o una estrella?",
+                    options: [
+                        { text: "Una estrella brillante", emoji: "🌟", isCorrect: true },
+                        { text: "Un planeta gigante", emoji: "🪐", isCorrect: false },
+                        { text: "Una luna pequeña", emoji: "🌙", isCorrect: false }
+                    ],
+                    svg: `<svg width="120" height="120" viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" fill="#FBBF24"/><g stroke="#F59E0B" stroke-width="4"><line x1="50" y1="5" x2="50" y2="15"/><line x1="50" y1="85" x2="50" y2="95"/><line x1="5" y1="50" x2="15" y2="50"/><line x1="85" y1="50" x2="95" y2="50"/></g></svg>`
+                }
+            ]
+        };
+
+        /* ==========================================================================
+           4. NAVEGACIÓN Y FLUJO
+           ========================================================================== */
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function startAdventure() {
+            const nameInput = document.getElementById('player-name-input').value.trim();
+            if (!nameInput) {
+                showToast("⚠️ ¡Escribe tu nombre para iniciar!", "incorrect");
+                speakText("Por favor escribe tu nombre para comenzar la aventura.");
+                return;
+            }
+            currentUser = nameInput;
+            document.getElementById('user-display-name').textContent = currentUser;
+            showScreen('screen-menu');
+            speakText(`¡Bienvenido ${currentUser}! Elige una actividad para comenzar.`);
+        }
+
+        function showMenu() {
+            showScreen('screen-menu');
+        }
+
+        function loadActivity(actNumber) {
+            currentActivity = actNumber;
+            correctCount = 0;
+            errorCount = 0;
+            currentStep = 0;
+            activityStartTime = Date.now();
+
+            if (actNumber === 1 || actNumber === 2) {
+                setupClassificationGame(actNumber === 1 ? activity1Data : activity2Data);
+                showScreen('screen-classification');
+            } else if (actNumber === 3) {
+                setupQuizGame();
+                showScreen('screen-quiz');
+            }
+        }
+
+        /* ==========================================================================
+           5. LÓGICA ACTIVIDAD 1 Y 2 (CLASIFICACIÓN)
+           ========================================================================== */
+        function setupClassificationGame(data) {
+            document.getElementById('activity-title').textContent = data.title;
+            document.getElementById('activity-instruction').textContent = data.instruction;
+            document.getElementById('btn-audio-instruction').onclick = () => speakText(data.instruction);
+            speakText(data.instruction);
+
+            const dropContainer = document.getElementById('drop-zones-container');
+            const itemsContainer = document.getElementById('draggable-items-container');
+            
+            dropContainer.innerHTML = '';
+            itemsContainer.innerHTML = '';
+            updateProgressBar(0, data.items.length, 'activity-progress');
+
+            // Render Zonas
+            data.categories.forEach(cat => {
+                const zone = document.createElement('div');
+                zone.className = 'drop-zone';
+                zone.dataset.category = cat.id;
+                zone.innerHTML = `<h4>${cat.title}</h4>`;
+                
+                // Eventos Drag & Drop
+                zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+                zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+                zone.addEventListener('drop', e => handleDrop(e, zone, data));
+                
+                // Evento para Clic/Tap Alternativo
+                zone.addEventListener('click', () => handleZoneClick(zone, data));
+
+                dropContainer.appendChild(zone);
+            });
+
+            // Render Elementos (Desordenados)
+            const shuffledItems = [...data.items].sort(() => Math.random() - 0.5);
+            shuffledItems.forEach(item => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'game-item';
+                itemEl.draggable = true;
+                itemEl.dataset.id = item.id;
+                itemEl.dataset.category = item.category;
+                itemEl.dataset.text = item.text;
+                itemEl.innerHTML = `<span class="emoji">${item.emoji}</span><span>${item.text}</span>`;
+
+                itemEl.addEventListener('dragstart', e => {
+                    e.dataTransfer.setData('text/plain', item.id);
+                });
+
+                // Selección para toque móvil
+                itemEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    selectItemForTouch(itemEl);
+                });
+
+                itemsContainer.appendChild(itemEl);
+            });
+        }
+
+        function selectItemForTouch(itemEl) {
+            document.querySelectorAll('.game-item').forEach(i => i.style.borderColor = '#E2E8F0');
+            selectedItem = itemEl;
+            itemEl.style.borderColor = 'var(--accent-purple)';
+            speakText(itemEl.dataset.text);
+        }
+
+        function handleZoneClick(zone, data) {
+            if (!selectedItem) return;
+            const targetCategory = zone.dataset.category;
+            const itemCategory = selectedItem.dataset.category;
+
+            checkClassification(selectedItem, itemCategory, targetCategory, zone, data);
+            selectedItem = null;
+        }
+
+        function handleDrop(e, zone, data) {
+            e.preventDefault();
+            zone.classList.remove('drag-over');
+            const itemId = e.dataTransfer.getData('text/plain');
+            const itemEl = document.querySelector(`.game-item[data-id="${itemId}"]`);
+            if (!itemEl) return;
+
+            const targetCategory = zone.dataset.category;
+            const itemCategory = itemEl.dataset.category;
+
+            checkClassification(itemEl, itemCategory, targetCategory, zone, data);
+        }
+
+        function checkClassification(itemEl, itemCat, targetCat, zone, data) {
+            if (itemCat === targetCat) {
+                // Correcto
+                playSound('correct');
+                showToast("¡Excelente! 🌟", "correct");
+                zone.appendChild(itemEl);
+                itemEl.draggable = false;
+                itemEl.style.borderColor = 'var(--accent-green)';
+                itemEl.onclick = null;
+                correctCount++;
+                addStar();
+                
+                const currentPlaced = document.querySelectorAll('.drop-zone .game-item').length;
+                updateProgressBar(currentPlaced, data.items.length, 'activity-progress');
+
+                if (currentPlaced === data.items.length) {
+                    setTimeout(() => finishActivity(data.title), 800);
+                }
+            } else {
+                // Error Suave
+                playSound('incorrect');
+                errorCount++;
+                showToast("¡Casi! Inténtalo de nuevo 😊", "incorrect");
+                speakText("Casi lo logras. Inténtalo de nuevo en otra categoría.");
+            }
+        }
+
+        /* ==========================================================================
+           6. LÓGICA ACTIVIDAD 3 (SISTEMA SOLAR)
+           ========================================================================== */
+        function setupQuizGame() {
+            currentStep = 0;
+            renderQuizStep();
+        }
+
+        function renderQuizStep() {
+            const data = activity3Data.questions[currentStep];
+            updateProgressBar(currentStep, activity3Data.questions.length, 'quiz-progress');
+
+            document.getElementById('quiz-question-text').textContent = data.question;
+            document.getElementById('btn-audio-quiz').onclick = () => speakText(data.question);
+            document.getElementById('quiz-svg-container').innerHTML = data.svg;
+            speakText(data.question);
+
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = '';
+
+            data.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<span class="emoji">${opt.emoji}</span><span>${opt.text}</span>`;
+                btn.onclick = () => handleQuizAnswer(opt.isCorrect);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function handleQuizAnswer(isCorrect) {
+            if (isCorrect) {
+                playSound('correct');
+                correctCount++;
+                addStar();
+                showToast("¡Correcto! 🚀", "correct");
+                currentStep++;
+
+                if (currentStep < activity3Data.questions.length) {
+                    setTimeout(renderQuizStep, 1000);
+                } else {
+                    updateProgressBar(activity3Data.questions.length, activity3Data.questions.length, 'quiz-progress');
+                    setTimeout(() => finishActivity("El Sistema Solar 🪐"), 800);
+                }
+            } else {
+                playSound('incorrect');
+                errorCount++;
+                showToast("¡Inténtalo otra vez! 💫", "incorrect");
+                speakText("Esa no es la respuesta, ¡inténtalo de nuevo!");
+            }
+        }
+
+        /* ==========================================================================
+           7. GAMIFICACIÓN Y RETROALIMENTACIÓN
+           ========================================================================== */
+        function addStar() {
+            totalStars++;
+            document.getElementById('star-count').textContent = totalStars;
+        }
+
+        function updateProgressBar(current, total, elementId) {
+            const percentage = (current / total) * 100;
+            document.getElementById(elementId).style.width = `${percentage}%`;
+        }
+
+        function showToast(message, type) {
+            const toast = document.getElementById('feedback-toast');
+            document.getElementById('toast-text').textContent = message;
+            document.getElementById('toast-emoji').textContent = type === 'correct' ? '🌟' : '💡';
+            toast.className = `feedback-toast show ${type}`;
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 1800);
+        }
+
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+
+            const particles = Array.from({ length: 60 }, () => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height - canvas.height,
+                color: ['#FF85A1', '#FFD166', '#06D6A0', '#118AB2', '#9D4EDD'][Math.floor(Math.random() * 5)],
+                size: Math.random() * 10 + 5,
+                speedY: Math.random() * 3 + 2,
+                speedX: Math.random() * 2 - 1
+            }));
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.y += p.speedY;
+                    p.x += p.speedX;
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
+                });
+                if (particles.some(p => p.y < canvas.height)) {
+                    requestAnimationFrame(animate);
+                }
+            }
+            animate();
+        }
+
+        /* ==========================================================================
+           8. FINALIZACIÓN Y GUARDADO DE DATOS
+           ========================================================================== */
+        function finishActivity(activityName) {
+            const elapsedTime = Math.round((Date.now() - activityStartTime) / 1000);
+            playSound('win');
+            triggerConfetti();
+
+            document.getElementById('summary-correct').textContent = correctCount;
+            document.getElementById('summary-errors').textContent = errorCount;
+            document.getElementById('summary-time').textContent = `${elapsedTime} segundos`;
+
+            // Guardar en LocalStorage
+            saveRecord({
+                user: currentUser,
+                activity: activityName,
+                correct: correctCount,
+                errors: errorCount,
+                time: elapsedTime,
+                date: new Date().toLocaleDateString()
+            });
+
+            showScreen('screen-summary');
+            speakText(`¡Felicitaciones ${currentUser}! Completaste ${activityName} con éxito.`);
+        }
+
+        function saveRecord(record) {
+            const records = JSON.parse(localStorage.getItem('app_educational_records') || '[]');
+            records.push(record);
+            localStorage.setItem('app_educational_records', JSON.stringify(records));
+        }
+
+        /* ==========================================================================
+           9. PANEL DOCENTE Y REPORTES (FormSubmit / WhatsApp / CSV)
+           ========================================================================== */
+        function openTeacherPanel() {
+            const tbody = document.querySelector('#records-table tbody');
+            tbody.innerHTML = '';
+            const records = JSON.parse(localStorage.getItem('app_educational_records') || '[]');
+
+            records.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${r.user}</td><td>${r.activity}</td><td>${r.correct}</td><td>${r.errors}</td><td>${r.time}s</td>`;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('teacher-modal').classList.add('active');
+        }
+
+        function closeTeacherPanel() {
+            document.getElementById('teacher-modal').classList.remove('active');
+        }
+
+        function clearRecords() {
+            if (confirm("¿Deseas borrar todo el historial?")) {
+                localStorage.removeItem('app_educational_records');
+                openTeacherPanel();
+            }
+        }
+
+        function exportCSV() {
+            const records = JSON.parse(localStorage.getItem('app_educational_records') || '[]');
+            if (records.length === 0) {
+                alert("No hay datos para exportar.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,Estudiante,Actividad,Aciertos,Errores,Tiempo(s),Fecha\n";
+            records.forEach(r => {
+                csvContent += `"${r.user}","${r.activity}",${r.correct},${r.errors},${r.time},"${r.date}"\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Reporte_Educativo_${currentUser || 'Estudiante'}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function sendReportWhatsApp() {
+            const text = `¡Hola! 🌟 ${currentUser} ha completado una actividad educativa:\n` +
+                         `• Aciertos: ${correctCount}\n` +
+                         `• Intentos extra: ${errorCount}\n` +
+                         `• Tiempo: ${document.getElementById('summary-time').textContent}`;
+            const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        function sendReportFormSubmit() {
+            // Ejemplo de integración con FormSubmit usando formulario dinámico
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'https://formsubmit.co/docente@escuela.edu'; // Correo de destino
+            form.target = '_blank';
+
+            const fields = {
+                Estudiante: currentUser,
+                Aciertos: correctCount,
+                Errores: errorCount,
+                Tiempo: document.getElementById('summary-time').textContent,
+                _subject: `Reporte Educativo de ${currentUser}`
+            };
+
+            for (const key in fields) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = fields[key];
+                form.appendChild(input);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+        }
+    </script>
+</body>
+</html>
